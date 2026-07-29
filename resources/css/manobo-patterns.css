@@ -1,0 +1,72 @@
+/* Traditional Manobo-inspired patterns */
+.manobo-diamond-pattern {
+    background-image: 
+        linear-gradient(45deg, #8B4513 25%, transparent 25%),
+        linear-gradient(-45deg, #8B4513 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #8B4513 75%),
+        linear-gradient(-45deg, transparent 75%, #8B4513 75%);
+    background-size: 20px 20px;
+    background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+    opacity: 0.1;
+}
+
+.manobo-tribal-border {
+    position: relative;
+}
+
+.manobo-tribal-border::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #8B4513, #D2691E, #CD853F, #D2691E, #8B4513);
+    background-size: 200% 100%;
+    animation: manoboGlow 3s ease-in-out infinite;
+}
+
+@keyframes manoboGlow {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+
+/* Manobo spearhead pattern */
+.spearhead-pattern {
+    background-image: 
+        linear-gradient(60deg, #8B4513 12%, transparent 12.5%, transparent 87%, #8B4513 87.5%, #8B4513),
+        linear-gradient(-60deg, #8B4513 12%, transparent 12.5%, transparent 87%, #8B4513 87.5%, #8B4513),
+        linear-gradient(0deg, #8B4513 12%, transparent 12.5%, transparent 87%, #8B4513 87.5%, #8B4513),
+        linear-gradient(90deg, #8B4513 12%, transparent 12.5%, transparent 87%, #8B4513 87.5%, #8B4513);
+    background-size: 40px 40px;
+    background-color: #FFF8F0;
+    opacity: 0.05;
+}
+
+/* Manobo weave pattern */
+.manobo-weave {
+    background-image: 
+        linear-gradient(30deg, #8B4513 8%, transparent 8.5%, transparent 91.5%, #8B4513 92%),
+        linear-gradient(-30deg, #8B4513 8%, transparent 8.5%, transparent 91.5%, #8B4513 92%);
+    background-size: 30px 30px;
+    background-color: #FFF8F0;
+    opacity: 0.08;
+}
+
+/* Decorative borders */
+.border-manobo {
+    border: 2px solid #8B4513;
+    position: relative;
+}
+
+.border-manobo::after {
+    content: '◆';
+    position: absolute;
+    bottom: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #8B4513;
+    font-size: 20px;
+    background: #FFF8F0;
+    padding: 0 10px;
+}

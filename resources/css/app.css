@@ -1,0 +1,99 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Inter:wght@300;400;600;700&display=swap');
+
+
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+@import './manobo-patterns.css';
+
+@layer base {
+    :root {
+        --manobo-primary: #8B4513;
+        --manobo-secondary: #D2691E;
+        --manobo-accent: #CD853F;
+        --manobo-dark: #3E2723;
+        --manobo-light: #FFF8F0;
+        --manobo-pattern: #4A2810;
+    }
+
+    html {
+        scroll-behavior: smooth;
+    }
+
+    body {
+        font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        background-color: var(--manobo-light);
+        color: var(--manobo-dark);
+    }
+
+    .manobo-font {
+        font-family: 'Georgia', serif;
+        letter-spacing: 0.02em;
+    }
+}
+
+@layer components {
+    .manobo-border {
+        border-image: repeating-linear-gradient(
+            45deg,
+            #8B4513,
+            #8B4513 10px,
+            #D2691E 10px,
+            #D2691E 20px
+        ) 30;
+    }
+
+    .manobo-shadow {
+        box-shadow: 
+            0 4px 6px rgba(139, 69, 19, 0.1),
+            0 2px 4px rgba(139, 69, 19, 0.06);
+    }
+
+    .manobo-card {
+       
+        border: 2px solid #8B4513;
+    }
+
+    .manobo-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(139, 69, 19, 0.2);
+    }
+
+    .manobo-button {
+       
+        background: linear-gradient(135deg, #8B4513 0%, #D2691E 100%);
+        color: white;
+    }
+
+    .manobo-button:hover {
+        transform: scale(1.05);
+        box-shadow: 0 5px 15px rgba(139, 69, 19, 0.4);
+    }
+
+    .manobo-button-outline {
+       
+        border: 2px solid #8B4513;
+        color: #8B4513;
+        background: transparent;
+    }
+
+    .manobo-button-outline:hover {
+        background: #8B4513;
+        color: white;
+        transform: scale(1.05);
+    }
+
+    .manobo-header {
+        background: linear-gradient(135deg, #3E2723 0%, #4A2810 50%, #5D3A1A 100%);
+        color: white;
+    }
+
+    .manobo-section {
+       
+        background: linear-gradient(180deg, #FFF8F0 0%, #F5EDE0 100%);
+    }
+
+    .manobo-pattern-bg {
+        background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%238B4513' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+}
