@@ -8,7 +8,7 @@ use Inertia\Inertia;
 /////////
 
 use App\Http\Controllers\Auth\LoginController;
-//use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\DashboardController;
 
 //////////////////////////////////////////
@@ -18,13 +18,20 @@ use App\Http\Controllers\FAQController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProcessController;
 
+///////////////////////////////////////////
+
+
+
+use App\Http\Controllers\UserManagementController;
+use App\Http\Controllers\AuditTrailController;
+use App\Http\Controllers\DocumentController;
+
+
 ////////////////////////
 
 Route::get('/about', [AboutController::class, 'about'])->name('about');
 
 ///////////////////////////////
-
-
 
 // Public Routes
 //Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -53,6 +60,14 @@ Route::post('/register', [RegisterController::class, 'register']);
 // Protected routes
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::resource('/user-management', UserManagementController::class);
+    Route::get('/user-management/roles-permissions', [UserManagementController::class, 'rolesPermissions'])->name('user-management.roles-permissions');
+    Route::post('/user-management/permissions', [UserManagementController::class, 'updatePermissions'])->name('user-management.permissions');
+    
+    Route::get('/audit-trails', [AuditTrailController::class, 'index'])->name('audit-trails');
+    
+   // Route::resource('/documents', DocumentController::class);
+
 });
 
 ///////////////
@@ -63,3 +78,15 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/notifications/read', [DashboardController::class, 'markNotificationRead'])->name('notifications.read');
     Route::post('/notifications/read-all', [DashboardController::class, 'markAllNotificationsRead'])->name('notifications.read-all');
 });
+
+////////////////////////////////
+
+    Route::get('/documents', [DocumentController::class, 'index'])->name('documents');
+
+////////////////////////////
+
+// User Management routes
+    
+     Route::get('/audit-trails', [AuditTrailController::class, 'index'])->name('audit-trails');
+     Route::get('/user-management', [UserManagementController::class, 'index'])->name('user-management');
+     Route::put('/user-management/{user}', [UserManagementController::class, 'update'])->name('user-management.update');

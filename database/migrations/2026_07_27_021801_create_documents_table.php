@@ -12,9 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('documents', function (Blueprint $table) {
+            //$table->id();
+            //$table->timestamps();
             $table->id();
-            $table->timestamps();
-             $table->id();
             $table->string('tracking_number')->unique();
             $table->string('title');
             $table->text('description')->nullable();
@@ -28,6 +28,8 @@ return new class extends Migration
             $table->foreignId('received_by')->constrained('users');
             $table->foreignId('released_by')->nullable()->constrained('users');
             $table->string('qr_code')->nullable();
+            $table->foreignId('uploaded_by')->constrained('users');
+            $table->boolean('is_urgent')->default(false);
             $table->text('remarks')->nullable();
             $table->timestamps();
         });

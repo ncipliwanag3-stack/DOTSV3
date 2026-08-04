@@ -10,6 +10,19 @@ class UserSeeder extends Seeder
 {
     public function run(): void
     {
+        
+        // Create Admin User
+        User::create([
+            'dots_id' => 'DOTS-2026-000001',
+            'name' => 'Maria Santos',
+            'email' => 'admin@ncip.gov.ph',
+            'password' => Hash::make('password123'),
+            'office' => 'NCIP Central Office',
+            'position' => 'System Administrator',
+            'role_id' => $adminRole->id,
+            'is_active' => true
+        ]);
+        
         User::create([
             'name' => 'Admin User',
             'email' => 'admin@ncip.gov.ph',

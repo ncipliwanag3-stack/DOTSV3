@@ -14,12 +14,14 @@ export default function Sidebar({ user, isOpen, setIsOpen }) {
     const [showPrivacyModal, setShowPrivacyModal] = useState(false);
     const { url } = usePage();
 
+   //////////////// user-management.permissions  user-management
     const navigation = [
         { name: 'Dashboard', href: '/dashboard', icon: HomeIcon },
-        { name: 'Documents', href: '/documents', icon: DocumentIcon },
-        { name: 'Archives', href: '/archives', icon: HomeIcon }, 
+        { name: 'Documents', href: '/documents', icon: DocumentIcon }, 
         { name: 'Other Information System', href: '/other-info', icon: ClipboardDocumentListIcon },
+        { name: 'Archives', href: '/archives', icon: HomeIcon },
         { name: 'Audit Trails', href: '/audit-trails', icon: HomeIcon },
+        { name: 'User Management', href: '/user-management', icon: HomeIcon },
     ];
 
     return (
@@ -45,7 +47,7 @@ export default function Sidebar({ user, isOpen, setIsOpen }) {
                     <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-3">
                             <div className="w-12 h-12 bg-amber-600 rounded-full flex items-center justify-center">
-                                <span className="text-2xl font-bold">DOTS</span>
+                                <span className="text-2xl font-bold">D</span>
                             </div>
                             <div>
                                 <h1 className="text-2xl font-bold tracking-wider">DOTS</h1>
@@ -59,13 +61,13 @@ export default function Sidebar({ user, isOpen, setIsOpen }) {
                 <div className="p-4 mx-4 mt-4 bg-amber-700/50 rounded-lg border border-amber-600">
                     <div className="flex items-center space-x-3">
                         <img 
-                            src={user.avatar_url} 
-                            alt={user.name}
+                            src={user?.avatarUrl || '/default-avatar.png'} 
+                            alt={user?.name || "User avatar"}  
                             className="w-12 h-12 rounded-full border-2 border-amber-400"
                         />
                         <div className="flex-1 min-w-0">
-                            <p className="text-sm font-semibold truncate">{user.name}</p>
-                            <p className="text-xs text-amber-200">{user.role}</p>
+                            <p className="text-sm font-semibold truncate">{user?.name || ''}</p>
+                            <p className="text-xs text-amber-200">{user?.role}</p>
                             <span className="inline-block mt-1 text-xs bg-amber-600 px-2 py-0.5 rounded-full">
                                 Admin Access
                             </span>

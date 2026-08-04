@@ -18,9 +18,12 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
+        'dots_id',
         'name',
         'email',
         'password',
+        'office',
+        'position',
         'profile_photo',
         'role',
         'avatar',
@@ -52,6 +55,28 @@ class User extends Authenticatable
         return $this->hasMany(Document::class, 'received_by');
     }
 
+    public function hasPermission($module, $action)
+    {
+        $permission = Permission::where('role', $this->role)
+            ->where('module', $module)
+            ->first();
+
+        if (!$permission) return false;
+
+        $actionMap = [
+            'create' => 'can_create',
+            'read' => 'can_read',
+            'update' => 'can_update',
+            'delete' => 'can_delete',
+        ];
+
+        return $permission->{$actionMap[$action]} ?? false;
+
+        
+
+        
+    }
+
     public function releasedDocuments()
     {
         return $this->hasMany(Document::class, 'released_by');
@@ -70,5 +95,10 @@ class User extends Authenticatable
     public function getAvatarUrlAttribute()
     {
         return $this->avatar ?? 'https://ui-avatars.com/api/?name=' . urlencode($this->name);
+    }
+
+    public function auditTrails() 
+    {
+        return $this->hasMany(AuditTrail::class);
     }
 }

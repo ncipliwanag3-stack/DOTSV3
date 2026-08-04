@@ -18,7 +18,7 @@ export default function AuthenticatedLayout({ children, user, stats, activities,
                 <div className="flex-1 flex flex-col overflow-hidden">
                     <TopBar 
                         user={user}
-                        unreadCount={unreadCount}
+                      //  unreadCount={unreadCount}
                         recentNotifications={recentNotifications}
                     />
                     

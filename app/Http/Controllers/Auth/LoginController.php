@@ -7,9 +7,17 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
+
+
+
+//use App\Http\Requests\Auth\LoginRequest;
+use App\Models\AuditLog;
+
+
 class LoginController extends Controller
 {
-    public function showLoginForm()
+    
+      public function showLoginForm()
     {
         return Inertia::render('Auth/Login');
     }
@@ -36,6 +44,25 @@ class LoginController extends Controller
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
+        return redirect('/');
+    }
+
+    public function destroy(Request $request)
+    {
+        AuditLog::create([
+            'module' => 'Authentication',
+            'event' => 'Logout',
+            'description' => 'User logged out',
+            'user_id' => Auth::id(),
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+        ]);
+
+        Auth::guard('web')->logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
         return redirect('/');
     }
 }

@@ -57,4 +57,14 @@ class Document extends Model
             default => 'blue',
         };
     }
+
+     public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function auditTrails()
+    {
+        return $this->hasMany(AuditTrail::class);
+    }
 }
