@@ -9,7 +9,7 @@ export default function RolesPermissionsTab({ users, permissions }) {
     const roles = ['admin', 'staff', 'regional_focal'];
 
     const getRolePermissions = (userId) => {
-        const perms = permissions[userId] || [];
+        //const perms = permissions[userId] || [];
         return perms.reduce((acc, perm) => ({
             ...acc,
             [perm.module]: {

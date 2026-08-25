@@ -16,6 +16,13 @@ return new class extends Migration
             $table->string('name');
             $table->string('guard_name')->default('web');
             $table->timestamps();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->string('module');
+            $table->boolean('can_create')->default(false);
+            $table->boolean('can_read')->default(false);
+            $table->boolean('can_update')->default(false);
+            $table->boolean('can_delete')->default(false);
+            $table->unique(['user_id', 'module']);
         });
         
         Schema::create('user_permissions', function (Blueprint $table) {

@@ -2,24 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-
 use App\Models\User;
-use App\Models\Permission;
-use App\Models\AuditLog;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Auth;
-///////////////////////////////////////////
 use App\Models\Role;
-
+use Illuminate\Http\Request;
 use Inertia\Inertia;
-
-
+use Illuminate\Support\Facades\Hash;
 
 class UserManagementController extends Controller
 {
-    //
     public function index(Request $request)
     {
         $query = User::query();
@@ -81,10 +71,10 @@ class UserManagementController extends Controller
 
         return redirect()->back()->with('success', 'User updated successfully');
     }
+
     public function destroy(User $user)
     {
         $user->delete();
         return redirect()->back()->with('success', 'User deleted successfully');
     }
 }
-

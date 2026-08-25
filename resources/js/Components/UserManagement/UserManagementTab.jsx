@@ -1,3 +1,4 @@
+// resources/js/Components/UserManagement/UserManagementTab.jsx
 import React, { useState } from 'react';
 import { useForm, router } from '@inertiajs/react';
 import { 
@@ -24,8 +25,8 @@ export default function UserManagementTab({ users, filters }) {
     });
 
     const { data, setData, get } = useForm({
-        search: filters.search || '',
-        role: filters.role || 'all',
+        search: filters?.search || '',
+        role: filters?.role || 'all',
     });
 
     const handleSearch = () => {

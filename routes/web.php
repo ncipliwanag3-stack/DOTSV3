@@ -27,6 +27,11 @@ use App\Http\Controllers\AuditTrailController;
 use App\Http\Controllers\DocumentController;
 
 
+use App\Http\Controllers\ArchiveController;
+
+
+
+
 ////////////////////////
 
 Route::get('/about', [AboutController::class, 'about'])->name('about');
@@ -59,6 +64,10 @@ Route::post('/register', [RegisterController::class, 'register']);
 
 // Protected routes
 Route::middleware(['auth'])->group(function () {
+    
+    
+
+    ///////////////////////////////
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::resource('/user-management', UserManagementController::class);
     Route::get('/user-management/roles-permissions', [UserManagementController::class, 'rolesPermissions'])->name('user-management.roles-permissions');
@@ -83,10 +92,38 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/documents', [DocumentController::class, 'index'])->name('documents');
 
-////////////////////////////
-
-// User Management routes
+    Route::post('/documents', [DocumentController::class, 'store'])->name('documents.store');
+    Route::put('/documents/{document}', [DocumentController::class, 'update'])->name('documents.update');
+    Route::delete('/documents/{document}', [DocumentController::class, 'destroy'])->name('documents.destroy');
     
-     Route::get('/audit-trails', [AuditTrailController::class, 'index'])->name('audit-trails');
-     Route::get('/user-management', [UserManagementController::class, 'index'])->name('user-management');
-     Route::put('/user-management/{user}', [UserManagementController::class, 'update'])->name('user-management.update');
+    //Route::post('/documents/{document}/release', [DocumentController::class, 'release'])->name('documents.release');
+    Route::post('/documents/{document}/archive', [DocumentController::class, 'archive'])->name('documents.archive');
+    
+    Route::resource('documents', DocumentController::class);
+    Route::post('/documents/{document}/release', [DocumentController::class, 'release'])->name('documents.release');
+    Route::post('/documents/{document}/terminal', [DocumentController::class, 'terminal'])->name('documents.terminal');
+    Route::get('/api/documents/data', [DocumentController::class, 'getDocumentData'])->name('documents.data');
+
+    ////////////////////////////
+
+// Audit Trails
+    Route::get('/audit-trails', [AuditTrailController::class, 'index'])->name('audit-trails');
+
+    // Authenticated Routes
+    Route::middleware(['auth'])->group(function () {
+    
+     // User Management
+    Route::get('/user-management', [UserManagementController::class, 'index'])->name('user.management');
+    Route::post('/users', [UserManagementController::class, 'store'])->name('users.store');
+    Route::put('/users/{user}', [UserManagementController::class, 'update'])->name('users.update');
+    Route::put('/user-management', [UserManagementController::class, 'update'])->name('user-management.update');
+    Route::delete('/users/{user}', [UserManagementController::class, 'destroy'])->name('users.destroy');
+    Route::delete('/user-management/{user}', [UserManagementController::class, 'destroy'])->name('users.destroy');
+    Route::post('/users/{user}/permissions', [UserManagementController::class, 'updatePermissions'])->name('users.permissions');
+     
+    });
+////////////////////////////////////
+
+     // Archive routes
+     Route::get('/archives', [ArchiveController::class, 'index'])->name('archives.index');
+

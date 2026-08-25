@@ -48,11 +48,13 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
+        
     ];
 
     public function documents()
     {
-        return $this->hasMany(Document::class, 'received_by');
+        //return $this->hasMany(Document::class, 'received_by');
+         return $this->hasMany(Document::class, 'created_by');
     }
 
     public function hasPermission($module, $action)

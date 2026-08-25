@@ -33,7 +33,8 @@ export default function AddUserModal({ isOpen, onClose, user, isEdit }) {
     const handleSubmit = (e) => {
         e.preventDefault();
         if (isEdit) {
-            put(`/users/${user.id}`, {
+                put(`/users/${user.id}`, {
+            
                 onSuccess: () => {
                     onClose();
                     reset();

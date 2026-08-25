@@ -31,4 +31,7 @@ export default defineConfig({
             ignored: ['/node_modules/', '/vendor/', '/.git/'],
         },
     },
+    optimizeDeps: {
+    include: ['@mui/material', '@mui/icons-material']
+  },
 });
