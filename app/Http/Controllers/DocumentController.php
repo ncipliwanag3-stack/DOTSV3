@@ -16,6 +16,7 @@ use App\Models\Recipient;
 use App\Http\Requests\DocumentRequest;
 
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Mail;
 
 ////////////////
 use App\Models\DocumentRecipient;
@@ -27,14 +28,57 @@ class DocumentController extends Controller
 {
     
    
-    public function index()
+    public function index(Request $request)
     {
-        $documents = Document::with(['creator', 'recipients'])
+        $filters = $request->only([
+            'search',
+            'origin_type',
+            'status',
+            'division_code',
+            'division',
+            'date_from',
+            'date_to',
+            'sort_by',
+            'sort_direction',
+        ]);
+
+        $query = Document::with(['creator', 'recipients']);
+
+        if ($request->filled('search')) {
+            $search = $request->string('search');
+            $query->where(function ($documentQuery) use ($search) {
+                $documentQuery->where('title', 'like', "%{$search}%")
+                    ->orWhere('tracking_number', 'like', "%{$search}%")
+                    ->orWhere('origin_type', 'like', "%{$search}%")
+                    ->orWhere('fullname', 'like', "%{$search}%")
+                    ->orWhere('division', 'like', "%{$search}%")
+                    ->orWhere('last_transaction', 'like', "%{$search}%");
+            });
+        }
+
+        $query->when($request->filled('origin_type'), fn ($query) => $query->where('origin_type', $request->origin_type));
+        $query->when($request->filled('division_code'), fn ($query) => $query->where('division_code', $request->division_code));
+        $query->when($request->filled('division'), fn ($query) => $query->where('division', $request->division));
+        $query->when($request->filled('status'), function ($query) use ($request) {
+            $query->whereRaw('LOWER(status) = ?', [strtolower($request->status)]);
+        });
+        $query->when($request->filled('date_from'), fn ($query) => $query->whereDate('date_received', '>=', $request->date_from));
+        $query->when($request->filled('date_to'), fn ($query) => $query->whereDate('date_received', '<=', $request->date_to));
+
+        $sortBy = in_array($request->sort_by, ['created_at', 'title', 'origin_type', 'last_transaction', 'fullname', 'division_code', 'division', 'date_received', 'status'], true)
+            ? $request->sort_by
+            : 'created_at';
+        $sortDirection = $request->sort_direction === 'asc' ? 'asc' : 'desc';
+
+        $documents = $query
+            ->orderBy($sortBy, $sortDirection)
             ->orderBy('created_at', 'desc')
-            ->paginate(10);
+            ->paginate(10)
+            ->withQueryString();
             
         return Inertia::render('Documents/DocumentIndex', [
             'documents' => $documents,
+            'filters' => $filters,
         ]);
     }
 
@@ -125,20 +169,48 @@ class DocumentController extends Controller
 
         $data['tracking_number'] = $this->generateTrackingNumber();
         $data['created_by'] = auth()->id();
+        $data['last_transaction'] = $data['last_transaction'] ?: 'Document Created';
 
         $document = Document::create($data);
 
-        // Create recipients
+        // Create recipients and send tracking notification email
         foreach ($recipients as $recipient) {
-            DocumentRecipient::create([
+            $recipientEmail = trim((string) ($recipient['email'] ?? ''));
+            $recipientName = trim((string) ($recipient['name'] ?? $recipient['fullname'] ?? 'Recipient'));
+
+            $recipientRecord = DocumentRecipient::create([
                 'document_id' => $document->id,
-                'name' => $recipient['name'],
-                'email' => $recipient['email'],
+                'name' => $recipientName,
+                'email' => $recipientEmail,
                 'status' => 'Pending'
             ]);
+
+            if ($recipientEmail !== '') {
+                Mail::raw(
+                    "Document Tracking Update\n\nDocument: {$document->title}\nTracking Number: {$document->tracking_number}\nStatus: {$document->status}\nLast Transaction: {$document->last_transaction}\n\nPlease monitor the document updates in the tracking system.",
+                    function ($message) use ($recipientEmail, $recipientName, $document) {
+                        $message->to($recipientEmail, $recipientName)
+                            ->subject('Document Tracking System Update - ' . $document->tracking_number)
+                            ->replyTo(config('mail.from.address'), config('mail.from.name'));
+                    }
+                );
+
+                $recipientRecord->update([
+                    'status' => 'Sent',
+                    'sent_at' => now(),
+                ]);
+            }
         }
 
-        return response()->json($document->load('recipients'), 201);
+        $document->refresh();
+
+        $document->load('recipients');
+
+        if ($request->expectsJson()) {
+            return response()->json($document, 201);
+        }
+
+        return redirect('/documents')->with('success', 'Document created successfully');
     }
 
     /////////////////
@@ -146,6 +218,8 @@ class DocumentController extends Controller
     {
         $validated = $request->validate([
             'title' => 'sometimes|string|max:255',
+            'origin_type' => 'sometimes|string|max:255',
+            'last_transaction' => 'nullable|string|max:255',
             'status' => 'sometimes|in:Pending,Processing,For Release,Released,Archived,Terminal',
             'urgency' => 'sometimes|in:Low,Medium,High,Urgent',
             'description' => 'nullable|string',
@@ -181,9 +255,12 @@ class DocumentController extends Controller
 
     public function release(Request $request, Document $document)
     {
+        $transactionMessage = 'Released on ' . now()->format('Y-m-d H:i:s');
+
         $document->update([
             'status' => 'Released',
             'released_at' => now(),
+            'last_transaction' => $transactionMessage,
         ]);
 
         // Update recipient statuses
@@ -195,7 +272,10 @@ class DocumentController extends Controller
      
     public function terminal(Request $request, Document $document)
     {
-        $document->update(['status' => 'Terminal']);
+        $document->update([
+            'status' => 'Terminal',
+            'last_transaction' => 'Marked as Terminal on ' . now()->format('Y-m-d H:i:s'),
+        ]);
 
         return redirect()->back()->with('success', 'Document terminal status updated');
     }
@@ -212,6 +292,11 @@ class DocumentController extends Controller
                     'tracking' => $doc->tracking_number,
                     'title' => $doc->title,
                     'type' => $doc->type,
+                    'originType' => $doc->origin_type,
+                    'lastTransaction' => $doc->last_transaction,
+                    'fullname' => $doc->fullname,
+                    'divisionCode' => $doc->division_code,
+                    'division' => $doc->division,
                     'dateReceived' => $doc->date_received->format('Y-m-d'),
                     'status' => $doc->status,
                     'urgency' => $doc->urgency,
@@ -240,6 +325,7 @@ class DocumentController extends Controller
         $document->update([
             'status' => 'Archived',
             'archived_at' => now(),
+            'last_transaction' => 'Archived on ' . now()->format('Y-m-d H:i:s'),
         ]);
 
         AuditTrail::create([
@@ -273,9 +359,16 @@ class DocumentController extends Controller
 
     private function generateTrackingNumber()
     {
-        $year = date('Y');
-        $last = Document::whereYear('created_at', $year)->count() + 1;
-        return "DOTS-{$year}-" . str_pad($last, 6, '0', STR_PAD_LEFT);
+        $date = now();
+        $prefix = $date->format('y-m-d');
+        $sequence = Document::whereDate('created_at', $date->toDateString())->count() + 1;
+
+        do {
+            $trackingNumber = 'CO-OPPR-ICTD-' . $prefix . '-' . str_pad($sequence, 5, '0', STR_PAD_LEFT);
+            $sequence++;
+        } while (Document::withTrashed()->where('tracking_number', $trackingNumber)->exists());
+
+        return $trackingNumber;
     }
 
     

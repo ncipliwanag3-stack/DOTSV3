@@ -1,20 +1,26 @@
-import { useState, useEffect } from 'react';
-import { usePage, router } from '@inertiajs/react';
+import { useState } from 'react';
+import { usePage } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import DocumentTable from './Components/DocumentTable';
 import AddDocumentModal from './Components/AddDocumentModal';
 import ColumnVisibilityPanel from './Components/ColumnVisibilityPanel';
-//import EmailStatusTracker from './Components/EmailStatusTracker';
+import DocumentFilters from './Components/DocumentFilters';
+
 import { PlusIcon, AdjustmentsVerticalIcon } from '@heroicons/react/24/outline';
 
 export default function DocumentIndex() {
-    const { documents } = usePage().props;
+    const { documents, filters = {} } = usePage().props;
     const [showAddModal, setShowAddModal] = useState(false);
     const [showColumnPanel, setShowColumnPanel] = useState(false);
     const [visibleColumns, setVisibleColumns] = useState({
         tracking: true,
         title: true,
         type: true,
+        originType: true,
+        lastTransaction: true,
+        fullname: true,
+        divisionCode: true,
+        division: true,
         dateReceived: true,
         status: true,
         urgency: true,
@@ -60,6 +66,7 @@ export default function DocumentIndex() {
 
                 {/* Document Table */}
                 <div className="p-6">
+                    <DocumentFilters filters={filters} />
                     <DocumentTable
                         documents={documents}
                         visibleColumns={visibleColumns}

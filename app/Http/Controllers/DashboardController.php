@@ -13,7 +13,6 @@ use App\Models\Notification;
 use Inertia\Inertia;
 
 
-///////////////////////////
 
 use App\Models\AuditLog;
 use Illuminate\Support\Facades\Auth;
@@ -33,25 +32,33 @@ class DashboardController extends Controller
      public function index()
     {
         $user = auth()->user();
-        
+
         // Stats
         $stats = [
-            'pending' => Document::where('status', 'pending')->count(),
-            'released' => Document::where('status', 'released')
-                ->whereDate('release_date', today())
+            'pending' => Document::whereRaw('LOWER(status) = ?', ['pending'])->count(),
+            'released' => Document::whereRaw('LOWER(status) = ?', ['released'])
+                ->whereDate('released_at', today())
                 ->count(),
-            'archived' => Document::where('status', 'archived')->count(),
-            'overdue' => Document::where('status', 'overdue')->count(),
+            'archived' => Document::whereRaw('LOWER(status) = ?', ['archived'])->count(),
+            'overdue' => Document::whereRaw('LOWER(status) = ?', ['overdue'])->count(),
         ];
 
-        // Latest Activities
-        $activities = ActivityLog::with(['user', 'document'])
-            ->latest()
+        // Latest document activity status
+        $activities = Document::query()
+            ->select([
+                'id',
+                'tracking_number',
+                'title',
+                'last_transaction',
+                'status',
+                'updated_at',
+            ])
+            ->latest('updated_at')
             ->paginate(10);
 
         // Overdue Documents
         $overdueDocuments = Document::with(['receiver', 'releaser'])
-            ->where('status', 'overdue')
+            ->whereRaw('LOWER(status) = ?', ['overdue'])
             ->latest()
             ->paginate(5);
 

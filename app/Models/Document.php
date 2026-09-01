@@ -41,6 +41,14 @@ class Document extends Model
         'tracking_number',
         'title',
         'type',
+        'origin_type',
+        'last_transaction',
+        'first_name',
+        'fullname',
+        'division_code',
+        'division',
+        'assigned_to',
+        'department',
         'date_received',
         'status',
         'urgency',
@@ -113,9 +121,17 @@ class Document extends Model
         };
     }
 
+    public static function normalizeStatusKey(?string $status): string
+    {
+        return strtolower(trim((string) ($status ?? '')));
+    }
 
+    public static function statusMatches($expected, $actual): bool
+    {
+        return self::normalizeStatusKey($expected) === self::normalizeStatusKey($actual);
+    }
 
-     public function user()
+    public function user()
     {
         return $this->belongsTo(User::class);
     }

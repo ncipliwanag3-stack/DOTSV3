@@ -44,6 +44,75 @@
     gap: 8px;
 }
 
+.email-tracker-summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 12px;
+    border-radius: 8px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    margin-bottom: 12px;
+}
+
+.email-tracker-summary strong {
+    display: block;
+    color: #0f172a;
+}
+
+.employee-select {
+    background-color: #fff;
+    color: #374151;
+}
+
+.employee-select:disabled {
+    cursor: wait;
+    background-color: #f3f4f6;
+}
+
+.employee-field {
+    color: #374151;
+}
+
+.employee-combobox {
+    position: relative;
+}
+
+.employee-options {
+    position: absolute;
+    z-index: 10;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    max-height: 220px;
+    overflow-y: auto;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    background: #fff;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.employee-option {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    padding: 8px 12px;
+    text-align: left;
+    color: #374151;
+}
+
+.employee-option:hover,
+.employee-option:focus {
+    background: #eff6ff;
+    outline: none;
+}
+
+.employee-option small {
+    color: #6b7280;
+}
+
 /* Responsive */
 @media (max-width: 640px) {
     .modal-container {

@@ -24,12 +24,11 @@ const Home = ({ heroContent }) => {
                         transition={{ duration: 1 }}
                     >
                         <div className="mb-8 flex justify-center">
-                            <div className="w-24 h-24 rounded-full border-4 border-indigenous-gold bg-indigenous-terracotta 
-                                          flex items-center justify-center">
-                                <svg className="w-12 h-12 text-white" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-                                </svg>
-                            </div>
+                            <img
+                                src="/ncip-logo-transparent.png"
+                                alt="National Commission on Indigenous Peoples Philippines logo"
+                                className="h-28 w-auto max-w-full object-contain drop-shadow-lg"
+                            />
                         </div>
                         <h1 className="font-display text-5xl md:text-7xl font-bold text-indigenous-dark mb-6">
                             {heroContent.title}

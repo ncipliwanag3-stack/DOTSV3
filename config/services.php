@@ -31,4 +31,11 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'employees' => [
+        'url' => env('EMPLOYEES_API_URL', 'http://192.168.5.130:8080/api/employees'),
+        'token' => env('EMPLOYEES_API_TOKEN'),
+        'username' => env('EMPLOYEES_API_USERNAME'),
+        'password' => env('EMPLOYEES_API_PASSWORD'),
+    ],
+
 ];

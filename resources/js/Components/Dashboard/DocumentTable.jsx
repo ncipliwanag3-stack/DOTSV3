@@ -2,13 +2,17 @@
 import React from 'react';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 
+//import OverdueDocumentsTable from './Dashboard/OverdueDocumentsTable';
+
 export default function DocumentTable({ documents, columns, pagination, type }) {
     const getStatusColor = (status) => {
         const colors = {
-            pending: 'bg-yellow-100 text-yellow-800',
-            released: 'bg-green-100 text-green-800',
-            archived: 'bg-gray-100 text-gray-800',
-            overdue: 'bg-red-100 text-red-800',
+            Pending: 'bg-yellow-100 text-yellow-800',
+            Processing: 'bg-yellow-100 text-yellow-800',
+            Released: 'bg-green-100 text-green-800',
+            Archived: 'bg-gray-100 text-gray-800',
+            Overdue: 'bg-red-100 text-red-800',
+            Terminal: 'bg-red-100 text-red-800',
         };
         return colors[status] || 'bg-gray-100 text-gray-800';
     };
@@ -46,9 +50,7 @@ export default function DocumentTable({ documents, columns, pagination, type }) 
                                     {getColumnLabel(column)}
                                 </th>
                             ))}
-                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Status
-                            </th>
+                           
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100">
@@ -67,12 +69,12 @@ export default function DocumentTable({ documents, columns, pagination, type }) 
                                     )}
                                     {columns.includes('last_transaction') && (
                                         <td className="px-4 py-3 text-sm text-gray-600">
-                                            {doc.last_transaction || doc.updated_at?.diffForHumans() || 'N/A'}
+                                            {doc.last_transaction || 'N/A'}
                                         </td>
                                     )}
                                     <td className="px-4 py-3">
                                         <span className={`px-2 py-1 text-xs rounded-full ${getStatusColor(doc.status)}`}>
-                                            {doc.status?.toUpperCase() || 'N/A'}
+                                            {doc.status || 'N/A'}
                                         </span>
                                     </td>
                                 </tr>

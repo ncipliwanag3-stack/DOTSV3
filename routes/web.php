@@ -91,12 +91,11 @@ Route::middleware(['auth'])->group(function () {
 ////////////////////////////////
 
     Route::get('/documents', [DocumentController::class, 'index'])->name('documents');
-
     Route::post('/documents', [DocumentController::class, 'store'])->name('documents.store');
     Route::put('/documents/{document}', [DocumentController::class, 'update'])->name('documents.update');
     Route::delete('/documents/{document}', [DocumentController::class, 'destroy'])->name('documents.destroy');
+    Route::get('/documents/{document}/email-status', [DocumentController::class, 'getEmailStatus'])->name('documents.email-status');
     
-    //Route::post('/documents/{document}/release', [DocumentController::class, 'release'])->name('documents.release');
     Route::post('/documents/{document}/archive', [DocumentController::class, 'archive'])->name('documents.archive');
     
     Route::resource('documents', DocumentController::class);
@@ -126,4 +125,6 @@ Route::middleware(['auth'])->group(function () {
 
      // Archive routes
      Route::get('/archives', [ArchiveController::class, 'index'])->name('archives.index');
+     Route::delete('/archives/{archive}', [ArchiveController::class, 'destroy'])->name('archives.destroy');
+     Route::get('/other-info', fn () => Inertia::render('Reports'))->name('other-info');
 

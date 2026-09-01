@@ -12,7 +12,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        //
+        if (Schema::hasTable('documents')) {
+            return;
+        }
+
         Schema::create('documents', function (Blueprint $table) {
             //$table->id();
             //$table->string('tracking_no')->unique();
@@ -44,6 +47,14 @@ return new class extends Migration
             $table->string('tracking_number')->unique();
             $table->string('title');
             $table->string('type');
+            $table->string('origin_type')->nullable()->after('type');
+            $table->string('last_transaction')->nullable()->after('origin_type');
+            $table->string('first_name')->nullable()->after('last_transaction');
+            $table->string('fullname')->nullable()->after('last_transaction');
+            $table->string('division_code')->nullable()->after('fullname');
+            $table->string('division')->nullable()->after('division_code');
+            $table->string('assigned_to')->nullable()->after('division');
+            $table->string('department')->nullable()->after('assigned_to');
             $table->date('date_received');
             $table->enum('status', ['Pending', 'Processing', 'For Release', 'Released', 'Archived', 'Terminal', 'Overdue']);
             $table->enum('urgency', ['Low', 'Medium', 'High', 'Urgent']);

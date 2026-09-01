@@ -16,13 +16,13 @@ export default defineConfig({
         },
     },
     server: {
-        host: '192.168.56.1',
+        host: '172.17.5.123',
         port: 5173,
         cors: {
             origin: '*',
         },
         hmr: {
-            host: '192.168.56.1',
+            host: '172.17.5.123',
             port: 5173,
             protocol: 'http',
         },

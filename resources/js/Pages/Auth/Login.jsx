@@ -44,6 +44,7 @@ const Login = () => {
                                 type="email"
                                 value={data.email}
                                 onChange={e => setData('email', e.target.value)}
+                                autoComplete="username"
                                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 
                                          focus:ring-indigenous-gold focus:border-transparent transition"
                                 placeholder="you@example.com"
@@ -61,6 +62,7 @@ const Login = () => {
                                     type={showPassword ? 'text' : 'password'}
                                     value={data.password}
                                     onChange={e => setData('password', e.target.value)}
+                                    autoComplete="current-password"
                                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 
                                              focus:ring-indigenous-gold focus:border-transparent transition"
                                     placeholder="Enter your password"

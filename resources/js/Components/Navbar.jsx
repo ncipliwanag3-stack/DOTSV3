@@ -26,12 +26,11 @@ export default function Navbar() {
                 <div className="flex justify-between h-16">
                     <div className="flex items-center">
                         <Link href="/" className="flex items-center space-x-2">
-                            <div className="w-10 h-10 bg-manobo-secondary rounded-full flex items-center justify-center">
-                                <span className="text-white font-bold text-xl">⚔</span>
-                            </div>
-                            <span className="text-white font-bold text-xl manobo-font hidden sm:block">
-                                NCIP
-                            </span>
+                            <img
+                                src="/ncip-logo-transparent.png"
+                                alt="National Commission on Indigenous Peoples logo"
+                                className="h-12 w-auto max-w-[220px] object-contain"
+                            />
                         </Link>
                     </div>
 

@@ -39,8 +39,10 @@ use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\ArchiveController;
 use App\Http\Controllers\AuditTrailController;
 use App\Http\Controllers\UserManagementController;
+use App\Http\Controllers\EmployeeController;
 
 Route::get('/page', [PageController::class, 'index']);
+Route::middleware('throttle:api')->get('/employees', [EmployeeController::class, 'index'])->name('api.employees');
 // Public routes for landing pages
 Route::get('/home', [PageController::class, 'home']);
 Route::get('/about', [PageController::class, 'about']);
@@ -61,7 +63,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Dashboard
     Route::get('/dashboard/stats', [DocumentController::class, 'stats']);
-    
+    Route::get('/dashboard/activities', [DocumentController::class, 'getLatestActivities']);
+    Route::get('/dashboard/overdue', [DocumentController::class, 'getOverdueDocuments']);
+
     // Documents
     Route::prefix('documents')->group(function () {
         Route::get('/latest', [DocumentController::class, 'latest']);
@@ -96,6 +100,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Archives
     Route::prefix('archives')->group(function () {
+        Route::get('/', [ArchiveController::class, 'index']);
         Route::get('/{year}', [ArchiveController::class, 'index']);
         Route::post('/{id}/restore', [ArchiveController::class, 'restore']);
         Route::delete('/{id}', [ArchiveController::class, 'destroy']);

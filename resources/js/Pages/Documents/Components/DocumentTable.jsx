@@ -56,6 +56,21 @@ export default function DocumentTable({ documents, visibleColumns }) {
         }
     };
 
+    const normalizeDocumentStatus = (doc) => {
+        const status = String(doc?.status || '').trim();
+        const receivedDate = doc?.date_received ? new Date(doc.date_received) : null;
+
+        if (status.toLowerCase() === 'pending' && receivedDate) {
+            const overdueThreshold = new Date();
+            overdueThreshold.setHours(overdueThreshold.getHours() - 24);
+            if (receivedDate < overdueThreshold) {
+                return 'Overdue';
+            }
+        }
+
+        return status || 'Pending';
+    };
+
     const getStatusColor = (status) => {
         const colors = {
             'Draft': 'bg-gray-100 text-gray-800',
@@ -63,6 +78,7 @@ export default function DocumentTable({ documents, visibleColumns }) {
             'Released': 'bg-green-100 text-green-800',
             'Archived': 'bg-blue-100 text-blue-800',
             'Terminated': 'bg-red-100 text-red-800',
+            'Overdue': 'bg-red-100 text-red-800',
         };
         return colors[status] || 'bg-gray-100 text-gray-800';
     };
@@ -136,6 +152,32 @@ export default function DocumentTable({ documents, visibleColumns }) {
                                     )}
                                 </th>
                             )}
+                            {visibleColumns.originType && (
+                                <th
+                                    onClick={() => handleSort('origin_type')}
+                                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                                >
+                                    Origin Type
+                                    {sortColumn === 'origin_type' && (
+                                        <span className="ml-1">{sortDirection === 'asc' ? '↑' : '↓'}</span>
+                                    )}
+                                </th>
+                            )}
+                            {visibleColumns.lastTransaction && (
+                                <th
+                                    onClick={() => handleSort('last_transaction')}
+                                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                                >
+                                    Last Transaction
+                                    {sortColumn === 'last_transaction' && (
+                                        <span className="ml-1">{sortDirection === 'asc' ? '↑' : '↓'}</span>
+                                    )}
+                                </th>
+                            )}
+                            {visibleColumns.fullname && <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Employee</th>}
+                            {visibleColumns.divisionCode && <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Division Code</th>}
+                             {visibleColumns.division && <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Division</th>}
+
                             {visibleColumns.dateReceived && (
                                 <th
                                     onClick={() => handleSort('date_received')}
@@ -183,7 +225,10 @@ export default function DocumentTable({ documents, visibleColumns }) {
                         </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
-                        {documents.data.map((doc, index) => (
+                        {documents.data.map((doc, index) => {
+                            const displayStatus = normalizeDocumentStatus(doc);
+
+                            return (
                             <tr
                                 key={doc.id}
                                 className={`${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'} hover:bg-blue-50 transition-colors`}
@@ -206,6 +251,19 @@ export default function DocumentTable({ documents, visibleColumns }) {
                                         {doc.type}
                                     </td>
                                 )}
+                                {visibleColumns.originType && (
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        {doc.origin_type || 'N/A'}
+                                    </td>
+                                )}
+                                {visibleColumns.lastTransaction && (
+                                    <td className="px-6 py-4 text-sm text-gray-500">
+                                        {doc.last_transaction || 'N/A'}
+                                    </td>
+                                )}
+                                {visibleColumns.fullname && <td className="px-6 py-4 text-sm text-gray-500">{doc.fullname || 'N/A'}</td>}
+                                {visibleColumns.divisionCode && <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{doc.division_code || 'N/A'}</td>}
+                                {visibleColumns.division && <td className="px-6 py-4 text-sm text-gray-500">{doc.division || 'N/A'}</td>}
                                 {visibleColumns.dateReceived && (
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                         {new Date(doc.date_received).toLocaleDateString()}
@@ -213,8 +271,8 @@ export default function DocumentTable({ documents, visibleColumns }) {
                                 )}
                                 {visibleColumns.status && (
                                     <td className="px-6 py-4 whitespace-nowrap">
-                                        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(doc.status)}`}>
-                                            {doc.status}
+                                        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(displayStatus)}`}>
+                                            {displayStatus}
                                         </span>
                                     </td>
                                 )}
@@ -272,7 +330,8 @@ export default function DocumentTable({ documents, visibleColumns }) {
                                     </td>
                                 )}
                             </tr>
-                        ))}
+                        );
+                        })}
                     </tbody>
                 </table>
             </div>

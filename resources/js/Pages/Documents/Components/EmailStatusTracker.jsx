@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { router } from '@inertiajs/react';
 import { XMarkIcon, EnvelopeIcon, CheckCircleIcon, ClockIcon } from '@heroicons/react/24/outline';
 
 export default function EmailStatusTracker({ document, onClose }) {
@@ -14,8 +13,18 @@ export default function EmailStatusTracker({ document, onClose }) {
 
     const fetchEmailStatus = async () => {
         try {
-            const response = await router.get(`/documents/${document.id}/email-status`);
-            setRecipientStatuses(response.data || []);
+            const response = await fetch(`/documents/${document.id}/email-status`, {
+                headers: {
+                    Accept: 'application/json',
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error(`Request failed with status ${response.status}`);
+            }
+
+            const statuses = await response.json();
+            setRecipientStatuses(statuses || []);
         } catch (error) {
             console.error('Error fetching email status:', error);
         } finally {
@@ -47,6 +56,8 @@ export default function EmailStatusTracker({ document, onClose }) {
         }
     };
 
+    const latestTransaction = document?.last_transaction || 'Document created';
+
     return (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[80vh] flex flex-col">
@@ -55,6 +66,11 @@ export default function EmailStatusTracker({ document, onClose }) {
                     <div>
                         <h3 className="text-lg font-semibold text-gray-900">Email Status Tracker</h3>
                         <p className="text-sm text-gray-500">{document?.tracking_number} - {document?.title}</p>
+                        <p className="text-xs text-gray-400 mt-1">
+                            {document?.origin_type || 'Origin not specified'}
+                            {' | '}
+                            {latestTransaction}
+                        </p>
                     </div>
                     <button
                         onClick={onClose}

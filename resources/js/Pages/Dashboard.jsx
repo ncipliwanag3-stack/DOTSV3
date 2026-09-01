@@ -1,7 +1,9 @@
 // resources/js/Pages/Dashboard.jsx
 import React from 'react';
+import { router } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import StatsCard from '@/Components/Dashboard/StatsCard';
+import OverdueDocumentsTable from '@/Components/Dashboard/OverdueDocumentsTable';
 import DocumentTable from '@/Components/Dashboard/DocumentTable';
 import { 
     ClockIcon, 
@@ -52,6 +54,20 @@ export default function Dashboard({
         },
     ];
 
+    const handleViewOverdueDocument = (doc) => {
+        const search = [
+            doc?.tracking_number,
+            doc?.title,
+            doc?.last_transaction,
+        ].filter(Boolean).join(' ');
+
+        const url = search
+            ? `/documents?status=overdue&search=${encodeURIComponent(search)}`
+            : '/documents?status=overdue';
+
+        router.visit(url);
+    };
+
     return (
         <AuthenticatedLayout
             user={user}
@@ -76,7 +92,7 @@ export default function Dashboard({
                 <h2 className="text-xl font-bold text-gray-900 mb-4">Latest Activity Status</h2>
                 <DocumentTable
                     documents={activities.data}
-                    columns={['tracking_number', 'title', 'last_transaction']}
+                    columns={['tracking_number', 'title', 'last_transaction', 'status']}
                     pagination={activities}
                     type="activity"
                 />
@@ -84,12 +100,14 @@ export default function Dashboard({
 
             {/* Overdue Documents Table */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-                <h2 className="text-xl font-bold text-red-600 mb-4">Overdue Documents</h2>
-                <DocumentTable
-                    documents={overdueDocuments.data}
-                    columns={['tracking_number', 'title', 'last_transaction']}
-                    pagination={overdueDocuments}
-                    type="overdue"
+                <OverdueDocumentsTable
+                    documents={overdueDocuments?.data || []}
+                    loading={false}
+                    onViewDocument={handleViewOverdueDocument}
+                    onDownloadDocument={() => router.visit('/documents?status=overdue')}
+                    onMarkAsCompleted={() => router.visit('/documents?status=overdue')}
+                    title="Overdue Documents"
+                    emptyMessage="No overdue documents found."
                 />
             </div>
         </AuthenticatedLayout>

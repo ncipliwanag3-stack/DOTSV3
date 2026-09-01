@@ -61,6 +61,7 @@ export default function Register() {
                                 type="email"
                                 value={data.email}
                                 onChange={(e) => setData('email', e.target.value)}
+                                autoComplete="email"
                                 className="w-full px-4 py-2 border border-gold/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-gold focus:border-transparent"
                                 required
                             />
@@ -77,6 +78,7 @@ export default function Register() {
                                 type="password"
                                 value={data.password}
                                 onChange={(e) => setData('password', e.target.value)}
+                                autoComplete="new-password"
                                 className="w-full px-4 py-2 border border-gold/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-gold focus:border-transparent"
                                 required
                             />
@@ -93,6 +95,7 @@ export default function Register() {
                                 type="password"
                                 value={data.password_confirmation}
                                 onChange={(e) => setData('password_confirmation', e.target.value)}
+                                autoComplete="new-password"
                                 className="w-full px-4 py-2 border border-gold/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-gold focus:border-transparent"
                                 required
                             />

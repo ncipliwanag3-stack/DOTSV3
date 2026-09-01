@@ -60,11 +60,20 @@ export default function Sidebar({ user, isOpen, setIsOpen }) {
                 {/* Account Card */}
                 <div className="p-4 mx-4 mt-4 bg-amber-700/50 rounded-lg border border-amber-600">
                     <div className="flex items-center space-x-3">
-                        <img 
-                            src={user?.avatarUrl || '/default-avatar.png'} 
-                            alt={user?.name || "User avatar"}  
-                            className="w-12 h-12 rounded-full border-2 border-amber-400"
-                        />
+                        {user?.avatarUrl ? (
+                            <img
+                                src={user.avatarUrl}
+                                alt={user?.name || "User avatar"}
+                                className="w-12 h-12 rounded-full border-2 border-amber-400"
+                            />
+                        ) : (
+                            <div
+                                aria-label={user?.name || "User avatar"}
+                                className="w-12 h-12 rounded-full border-2 border-amber-400 bg-amber-600 flex items-center justify-center text-lg font-semibold"
+                            >
+                                {user?.name?.charAt(0).toUpperCase() || 'U'}
+                            </div>
+                        )}
                         <div className="flex-1 min-w-0">
                             <p className="text-sm font-semibold truncate">{user?.name || ''}</p>
                             <p className="text-xs text-amber-200">{user?.role}</p>

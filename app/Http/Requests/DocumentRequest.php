@@ -27,6 +27,12 @@ class DocumentRequest extends FormRequest
         return [
             'title' => ['required', 'string', 'max:255'],
             'type' => ['required', 'string', 'max:255'],
+            'origin_type' => ['required', 'string', 'max:255'],
+            'last_transaction' => ['nullable', 'string', 'max:255'],
+            'first_name' => ['nullable', 'string', 'max:255'],
+            'fullname' => ['nullable', 'string', 'max:255'],
+            'division_code' => ['nullable', 'string', 'max:100'],
+            'division' => ['nullable', 'string', 'max:255'],
             'date_received' => ['required', 'date'],
             'status' => ['required', 'string', 'max:50'],
             'urgency' => ['required', 'string', 'max:20'],
